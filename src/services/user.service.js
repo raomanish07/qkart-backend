@@ -46,17 +46,30 @@ const getUserByEmail= async(email)=>{
  *
  * 200 status code on duplicate email - https://stackoverflow.com/a/53144807
  */
+const encryptPassword= async(password)=>{
+const salt= await bcrypt.genSalt();
+const hashedPassword= await bcrypt.hash(password,salt);
+return hashedPassword;
 
-const createUser=async(userBody)=>{
-    if (await User.isEmailTaken(userBody.email)) {
-        throw new ApiError(httpStatus.OK, "Email already taken");
-      }
-    
-      const hashedPassword = await bcrypt.hash(userBody.password, 10);
-    
-      const user = await User.create({ ...userBody, password: hashedPassword });
-      return user;
 }
+const createUser=async(userBody)=>{
+    try{
+        if (await User.isEmailTaken(userBody.email)) {
+            throw new ApiError(httpStatus[200], "Email already taken");
+            
+        }
+    
+        const hashedPassword = await encryptPassword(userBody.password);    
+        const user = await User.create({ ...userBody, password: hashedPassword });
+        return user;
+    }
+    catch(error){
+        throw error;
+    }
+      
+}
+
+
 
 
 module.exports={

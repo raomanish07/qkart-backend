@@ -5,6 +5,7 @@ const { userService } = require("../services");
 const mongoose = require('mongoose');
 
 // TODO: CRIO_TASK_MODULE_UNDERSTANDING_BASICS - Implement getUser() function
+
 /**
  * Get user details
  *  - Use service layer to get User data
@@ -14,6 +15,9 @@ const mongoose = require('mongoose');
  *  - If data exists for the provided "userId", return 200 status code and the object
  *  - If data doesn't exist, throw an error using `ApiError` class
  *    - Status code should be "404 NOT FOUND"
+ *    - Error message, "User not found"
+ *  - If the user whose token is provided and user whose data to be fetched don't match, throw `ApiError`
+ *    - Status code should be "403 FORBIDDEN"
  *    - Error message, "User not found"
  *
  * 
@@ -34,21 +38,24 @@ const mongoose = require('mongoose');
  *
  * Example response status codes:
  * HTTP 200 - If request successfully completes
+ * HTTP 403 - If request data doesn't match that of authenticated user
  * HTTP 404 - If user entity not found in DB
  * 
  * @returns {User | {address: String}}
  *
  */
 const getUser = catchAsync(async (req, res) => {
-  const id = mongoose.mongo.ObjectId(req.params.userId);
-
-  const data= await userService.getUserById(id);
-
-  if(!data){
+  //const {userId}= req.params;
+  
+  const userId = mongoose.mongo.ObjectId(req.params.userId);
+  const user= await userService.getUserById(userId);
+  if(!user){
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
-  
-  res.send(data)
+  if(user.email !== req.user.email){
+    throw new ApiError(httpStatus.FORBIDDEN,'User not authorized to access this resource ')
+  }
+  res.status(200).send(user);
 });
 
 
