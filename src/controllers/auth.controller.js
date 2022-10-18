@@ -37,7 +37,7 @@ const register = catchAsync(async (req, res) => {
     const user= await userService.createUser({name,email,password});
     const tokens= await tokenService.generateAuthTokens(user);
     const result= await {user,tokens};
-    res.status(httpStatus.CREATED).json(result);
+    res.status(httpStatus.CREATED).send(result);
   }
   catch(error){
     res.json(error);
@@ -83,7 +83,7 @@ const login = catchAsync(async (req, res) => {
   }
   catch(error){
     const {message,statusCode} = error;
-    res.status(statusCode).json({message,code:statusCode});
+    res.status(statusCode).send({message,code:statusCode});
   }
 });
 

@@ -21,9 +21,6 @@ const userSchema = mongoose.Schema(
     },
     password: {
       type: String,
-      required:true,
-      trim:true,
-      min:8,
       validate(value) {
         if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
           throw new Error(

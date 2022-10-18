@@ -3,12 +3,6 @@ const mongoose = require("mongoose");
 const app = require("./app");
 const config = require("./config/config");
 
-
-
-
-
-
-
 //const app1 = express();
 //app1.use(expressLogger);
 

@@ -10,8 +10,6 @@
     "test": "jest -i"
   },
   "dependencies": {
-    "@babel/core": "^7.17.10",
-    "@testing-library/dom": "^8.13.0",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
     "core-js": "^3.0.0",
@@ -19,7 +17,6 @@
     "cross-env": "^7.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "express-pino-logger": "^7.0.0",
     "helmet": "^4.1.0",
     "http-status": "^1.4.0",
     "joi": "^17.3.0",
@@ -29,11 +26,12 @@
     "morgan": "^1.9.1",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
-    "pino": "^8.4.2",
     "pm2": "^4.5.0",
-    "typescript": "^3.2.1",
     "validator": "^13.0.0",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "@testing-library/dom": "^8.13.0",
+    "typescript": "^3.2.1",
+    "@babel/core": "^7.17.10"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",

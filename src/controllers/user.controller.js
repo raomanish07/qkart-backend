@@ -10,6 +10,8 @@ const mongoose = require('mongoose');
  * Get user details
  *  - Use service layer to get User data
  * 
+ *  - If query param, "q" equals "address", return only the address field of the user
+ *  - Else,
  *  - Return the whole user object fetched from Mongo
 
  *  - If data exists for the provided "userId", return 200 status code and the object
@@ -35,6 +37,12 @@ const mongoose = require('mongoose');
  *     "__v": 0
  * }
  * 
+ * Request url - <workspace-ip>:8082/v1/users/6010008e6c3477697e8eaba3?q=address
+ * Response - 
+ * {
+ *   "address": "ADDRESS_NOT_SET"
+ * }
+ * 
  *
  * Example response status codes:
  * HTTP 200 - If request successfully completes
@@ -46,19 +54,49 @@ const mongoose = require('mongoose');
  */
 const getUser = catchAsync(async (req, res) => {
   //const {userId}= req.params;
-  
   const userId = mongoose.mongo.ObjectId(req.params.userId);
-  const user= await userService.getUserById(userId);
-  if(!user){
+  console.log(userId,'userid')
+  //let user;
+  let user = await(req.query.q==="address" ? await userService.getUserAddressById(req.params.userId) : await userService.getUserById(userId));
+  // if(req.query.q==='address'){
+  //   user = await userService.getUserAddressById(userId);
+    
+  // }
+  // user =await userService.getUserById(userId)
+
+   if(!user){
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
   if(user.email !== req.user.email){
     throw new ApiError(httpStatus.FORBIDDEN,'User not authorized to access this resource ')
   }
-  res.status(200).send(user);
+  req.query.q==="address"? res.status(200).send({address:user.address}): res.status(200).send(user)
+  //res.status(200).send(user);
 });
 
 
+
+const setAddress = catchAsync(async (req, res) => {
+  const user = await userService.getUserById(req.params.userId);
+
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+  if (user.email != req.user.email) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      "User not authorized to access this resource"
+    );
+  }
+
+  const address = await userService.setAddress(user, req.body.address);
+
+  res.send({
+    address: address,
+  });
+});
+
 module.exports = {
   getUser,
+  setAddress,
 };

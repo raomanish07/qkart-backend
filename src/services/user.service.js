@@ -24,6 +24,24 @@ const getUserByEmail= async(email)=>{
     return User.findOne({email})
 }
 
+// TODO: CRIO_TASK_MODULE_CART - Implement getUserAddressById()
+/**
+ * Get subset of user's data by id
+ * - Should fetch from Mongo only the email and address fields for the user apart from the id
+ *
+ * @param {ObjectId} id
+ * @returns {Promise<User>}
+ */
+ const getUserAddressById = async (id) => {
+  //const _id=id;
+   const user = await User.findOne({_id:id}, { 'address' :1, 'email': 1})
+     console.log(user,"user address")   
+    if(user){
+        return user;
+    }
+
+};
+
 // TODO: CRIO_TASK_MODULE_UNDERSTANDING_BASICS - Implement createUser(user)
 /**
  * Create a user
@@ -69,11 +87,21 @@ const createUser=async(userBody)=>{
       
 }
 
-
+const setAddress = async (user, newAddress) => {
+    user.address = newAddress;
+    await user.save();
+  
+    return user.address;
+  };
+  
 
 
 module.exports={
     createUser,
     getUserById,
-    getUserByEmail
+    getUserByEmail,
+    setAddress,
+    getUserAddressById
+    
+    
 }
