@@ -87,13 +87,16 @@ const createUser=async(userBody)=>{
       
 }
 
-const setAddress = async (user, newAddress) => {
+/**
+ * Set user's shipping address
+ * @param {String} email
+ * @returns {String}
+ */
+ const setAddress = async (user, newAddress) => {
     user.address = newAddress;
     await user.save();
-  
     return user.address;
   };
-  
 
 
 module.exports={
@@ -105,3 +108,5 @@ module.exports={
     
     
 }
+
+

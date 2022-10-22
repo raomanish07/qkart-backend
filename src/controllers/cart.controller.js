@@ -47,7 +47,7 @@ const addProductToCart = catchAsync(async (req, res) => {
     req.body.productId,
     req.body.quantity
   );
-console.log(cart)
+//console.log(cart)
   res.status(httpStatus.CREATED).send(cart);
 });
 
@@ -83,8 +83,22 @@ const updateProductInCart = catchAsync(async (req, res) => {
 });
 
 
+
+/**
+ * Checkout user's cart
+ */
+const checkout = catchAsync(async (req, res) => {
+  //console.log(req.user)
+   await cartService.checkout(req.user);
+  //console.log(res.status(),"Noida")
+    return (
+    res.status(httpStatus.NO_CONTENT).send()
+  );
+});
+
 module.exports = {
   getCart,
   addProductToCart,
   updateProductInCart,
+  checkout,
 };

@@ -1,6 +1,6 @@
 const httpStatus = require("http-status");
-const { Cart, Product } = require("../models");
-const ApiError = require("../utils/ApiError");
+const { Cart, Product,User } = require("../models");
+const ApiError= require('../utils/ApiError')
 const config = require("../config/config");
 const {getProductById,getProducts} = require('./product.service')
 
@@ -24,7 +24,7 @@ const getCartByUser = async (user) => {
     return userCart;
   }
   else{
-    throw new ApiError(httpStatus.NOT_FOUND,'User does not have a cart');
+   throw new ApiError(httpStatus.NOT_FOUND,'User does not have a cart');
   }
   
 };
@@ -186,9 +186,82 @@ const deleteProductFromCart = async (user, productId) => {
 };
 
 
+const checkout = async (user) => {
+  const userCart= await Cart.findOne({email:user.email});
+  //Tes1 1
+  if(userCart==null){
+    throw new ApiError(httpStatus.NOT_FOUND,"user does not have a cart")
+  }
+  if(userCart.cartItems.length===0){
+    throw new ApiError(httpStatus.BAD_REQUEST,"Cart Empty")
+  }
+  const hasSetNonDefaultAddress = await user.hasSetNonDefaultAddress();
+    console.log(hasSetNonDefaultAddress,"sercer")
+    if(!hasSetNonDefaultAddress){
+        throw new ApiError(httpStatus.BAD_REQUEST,"address not set")
+    }
+  
+
+    const totalCartCost= userCart.cartItems.reduce(
+      (total, item) => total + item.product.cost * item.quantity,
+      0
+    )
+    if(totalCartCost > user.walletMoney){
+      throw new ApiError(httpStatus.BAD_REQUEST,'Insufficient balance')
+    }
+
+    user.walletMoney = user.walletMoney - totalCartCost;
+   
+    userCart.cartItems.length=0;
+    await userCart.save();
+    await user.save();
+    
+   // userCart.cartItems.splice(0,userCart.cartItems.length)
+    
+    
+  // const userCart = await getCartByUser(user);
+  //   const {cartItems} = userCart;
+  
+  //   if(cartItems.length <= 0){
+  //    throw new ApiError(httpStatus.BAD_REQUEST,"User's cart does not have any product")
+  //  }
+ 
+  //  JSON.parse(JSON.stringify(cartItems)).forEach(item => {
+  //    if(!item.product._id){
+  //      throw new ApiError(httpStatus.NO_CONTENT,"cart does not have any product")
+  //    }
+  //  });
+   
+  //  const hasSetNonDefaultAddress = await user.hasSetNonDefaultAddress();
+  //  console.log(hasSetNonDefaultAddress,"sercer")
+  //  if(!hasSetNonDefaultAddress){
+  //      throw new ApiError(httpStatus.BAD_REQUEST,"address not set")
+  //  }
+  //  if(user.walletMoney === 0){
+  //    throw new ApiError(httpStatus.BAD_REQUEST,"Insufficient balance")
+  //  }
+   
+  //    //user.walletMoney =0;
+  //    const totalMoney= () => {
+  //       return cartItems.length
+  //         ? cartItems.reduce(
+  //             (total, item) => total + item.product.cost * item.quantity,
+  //             0
+  //           )
+  //         : 0;
+  //     };
+  //     user.walletMoney = user.walletMoney -totalMoney();
+  //    userCart.cartItems=[];
+  //    await userCart.save()
+  //    //await user.save();
+
+
+};
+
 module.exports = {
   getCartByUser,
   addProductToCart,
   updateProductInCart,
   deleteProductFromCart,
+  checkout,
 };

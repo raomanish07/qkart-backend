@@ -1,6 +1,5 @@
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { Button, Card, message, Spin, InputNumber } from "antd";
-
 import React from "react";
 import { config } from "../App";
 import "./Cart.css";
@@ -216,7 +215,6 @@ export default class Cart extends React.Component {
   };
 
   putToCart = async (productId, qty) => {
-    console.log(productId,qty)
     let response = {};
     let errored = false;
     let statusCode;
@@ -238,15 +236,9 @@ export default class Cart extends React.Component {
         }),
       });
 
-      // const data = await response_object.json();
-      const data = await response_object;
-      console.log(data);
-      statusCode= data.status;
-      //console.log(statusCode)
+      statusCode = response_object.status;
       if (statusCode !== 204) {
-        
         response = await response_object.json();
-        
       }
     } catch (e) {
       errored = true;
@@ -274,7 +266,6 @@ export default class Cart extends React.Component {
    
    */
   refreshCart = async () => {
-    console.log("refresh")
     const cart = await this.getCart();
     if (cart && cart.cartItems) {
       this.setState({
