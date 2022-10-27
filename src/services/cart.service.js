@@ -196,7 +196,7 @@ const checkout = async (user) => {
     throw new ApiError(httpStatus.BAD_REQUEST,"Cart Empty")
   }
   const hasSetNonDefaultAddress = await user.hasSetNonDefaultAddress();
-    console.log(hasSetNonDefaultAddress,"sercer")
+   console.log(hasSetNonDefaultAddress,"address cartService")
     if(!hasSetNonDefaultAddress){
         throw new ApiError(httpStatus.BAD_REQUEST,"address not set")
     }
@@ -212,49 +212,11 @@ const checkout = async (user) => {
 
     user.walletMoney = user.walletMoney - totalCartCost;
    
-    userCart.cartItems.length=0;
+    userCart.cartItems=[];
     await userCart.save();
     await user.save();
     
-   // userCart.cartItems.splice(0,userCart.cartItems.length)
-    
-    
-  // const userCart = await getCartByUser(user);
-  //   const {cartItems} = userCart;
-  
-  //   if(cartItems.length <= 0){
-  //    throw new ApiError(httpStatus.BAD_REQUEST,"User's cart does not have any product")
-  //  }
- 
-  //  JSON.parse(JSON.stringify(cartItems)).forEach(item => {
-  //    if(!item.product._id){
-  //      throw new ApiError(httpStatus.NO_CONTENT,"cart does not have any product")
-  //    }
-  //  });
-   
-  //  const hasSetNonDefaultAddress = await user.hasSetNonDefaultAddress();
-  //  console.log(hasSetNonDefaultAddress,"sercer")
-  //  if(!hasSetNonDefaultAddress){
-  //      throw new ApiError(httpStatus.BAD_REQUEST,"address not set")
-  //  }
-  //  if(user.walletMoney === 0){
-  //    throw new ApiError(httpStatus.BAD_REQUEST,"Insufficient balance")
-  //  }
-   
-  //    //user.walletMoney =0;
-  //    const totalMoney= () => {
-  //       return cartItems.length
-  //         ? cartItems.reduce(
-  //             (total, item) => total + item.product.cost * item.quantity,
-  //             0
-  //           )
-  //         : 0;
-  //     };
-  //     user.walletMoney = user.walletMoney -totalMoney();
-  //    userCart.cartItems=[];
-  //    await userCart.save()
-  //    //await user.save();
-
+   return user;
 
 };
 

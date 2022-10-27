@@ -67,7 +67,7 @@ describe("Cart routes", () => {
         .send();
         console.log(res.text, 'Manis Address')
       // TODO: CRIO_TASK_MODULE_TEST - Assert if status code is 400
-      //expect(res.status).toEqual(httpStatus.BAD_REQUEST);
+      expect(res.status).toEqual(httpStatus.BAD_REQUEST);
      
        //expect(true).toEqual(false);
     });
@@ -97,7 +97,7 @@ describe("Cart routes", () => {
         .send();
         //console.log(res.text);
       // TODO: CRIO_TASK_MODULE_TEST - Assert if status code is 204
-      expect(res.status).toEqual(httpStatus.BAD_REQUEST);
+      expect(res.status).toEqual(httpStatus.NO_CONTENT);
              //expect(true).toEqual(false);
       
 
@@ -107,9 +107,9 @@ describe("Cart routes", () => {
 
       const userCart= await Cart.findOne({email:userOne.email})
       console.log(userCart,"user cart")
-      expect(userCart).not.toBe(null);
+      expect(userCart).toBeDefined();
 
-      expect(userCart.cartItems.length).toEqual(1);
+      expect(userCart.cartItems.length).toEqual(0);
       
     
       // const dbCart = await Cart.findOne({ email: userOne.email });
